@@ -34,6 +34,7 @@ app.post("/add", async (req, res) => {
         res.redirect("/");
     } else {
       await userData.create({ ip: reqIP, name: req.body.name, color: color });
+      errorMessage= "Successfully added!!"
       res.redirect("/");
     }
   } catch (e) {
