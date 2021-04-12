@@ -29,12 +29,12 @@ app.post("/add", async (req, res) => {
     if (profanity.isMessageDirty(req.body.name)) {
       errorMessage = "Please don't use inappropriate words!! Behave yourself!!";
       res.redirect("/");
-      } else if (ip) {
-        errorMessage = "Already exist for this IP Address!!";
-        res.redirect("/");
+    } else if (ip) {
+      errorMessage = "Already exist for this IP Address!!";
+      res.redirect("/");
     } else {
       await userData.create({ ip: reqIP, name: req.body.name, color: color });
-      errorMessage= "Successfully added!!"
+      errorMessage = "Successfully added!!";
       res.redirect("/");
     }
   } catch (e) {
@@ -42,9 +42,21 @@ app.post("/add", async (req, res) => {
     res.redirect("/");
   }
 });
+
+app.post("/noerror", (req, res) => {
+  errorMessage = "";
+  res.redirect("/");
+});
 app.get("/", async (req, res) => {
   const data = await userData.find();
-  res.render("index", { data: data, count: data.length, error: errorMessage });
+  res.render("index", { data: data, count: data.length, error: errorMessage }),
+    async (req, res) => {
+      const data = await userData.find();
+      res.send("index", {
+        data: data,
+        count: data.length,
+      });
+    };
 });
 
 app.listen(PORT, () => {
