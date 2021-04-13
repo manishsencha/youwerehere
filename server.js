@@ -5,6 +5,7 @@ const profanity = require("profanity-hindi");
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.set("view engine", "ejs");
+app.set("trust proxy", true);
 
 const colorsarr = ["primary", "success", "danger", "info", "secondary"];
 
@@ -20,14 +21,21 @@ mongoose
   .catch((err) => console.log(err));
 
 var errorMessage = "";
+
 app.post("/add", async (req, res) => {
   try {
-    const reqIP = req.socket.remoteAddress;
+    const reqIP = req.ip;
+    // console.log(reqIP);
     const ip = await userData.findOne({ ip: reqIP });
+    const user = await userData.findOne({
+      name: { $regex: req.body.name, $options: "i" },
+    });
     const color = colorsarr[Math.floor(Math.random() * colorsarr.length)];
-
     if (profanity.isMessageDirty(req.body.name)) {
       errorMessage = "Please don't use inappropriate words!! Behave yourself!!";
+      res.redirect("/");
+    } else if (user) {
+      errorMessage = "Name already exists !!";
       res.redirect("/");
     } else if (ip) {
       errorMessage = "Already exist for this IP Address!!";
@@ -47,6 +55,7 @@ app.post("/noerror", (req, res) => {
   errorMessage = "";
   res.redirect("/");
 });
+
 app.get("/", async (req, res) => {
   const data = await userData.find();
   res.render("index", { data: data, count: data.length, error: errorMessage }),
