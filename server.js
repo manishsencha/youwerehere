@@ -2,6 +2,7 @@ const express = require("express");
 const mongoose = require("mongoose");
 const userData = require("./data");
 const profanity = require("profanity-hindi");
+const emoji = require("has-emoji");
 const app = express();
 const PORT = process.env.PORT || 3000;
 app.set("view engine", "ejs");
@@ -31,7 +32,10 @@ app.post("/add", async (req, res) => {
       name: req.body.name.toUpperCase().trim(),
     });
     const color = colorsarr[Math.floor(Math.random() * colorsarr.length)];
-    if (profanity.isMessageDirty(req.body.name)) {
+    if (emoji(req.body.name)) {
+      errorMessage = "Emotes are not allowed!!";
+      res.redirect("/");
+    } else if (profanity.isMessageDirty(req.body.name)) {
       errorMessage = "Please don't use inappropriate words!! Behave yourself!!";
       res.redirect("/");
     } else if (user) {
