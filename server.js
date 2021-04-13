@@ -14,16 +14,19 @@ const colorsarr = ["primary", "success", "danger", "info", "secondary"];
 
 app.use(express.urlencoded({ extended: false }));
 mongoose
-  .connect(
-    process.env.DB_URL,
-    { useNewUrlParser: true, useUnifiedTopology: true }
-  )
+  .connect(process.env.DB_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => {
     console.log("Connected to database");
   })
   .catch((err) => console.log(err));
 
-var errorMessage = "";
+var errorMessage = {
+  message : " ", 
+  type : " "
+};
 
 app.post("/add", async (req, res) => {
   try {
@@ -38,13 +41,22 @@ app.post("/add", async (req, res) => {
       errorMessage = "Emotes are not allowed!!";
       res.redirect("/");
     } else if (profanity.isMessageDirty(req.body.name)) {
-      errorMessage = "Please don't use inappropriate words!! Behave yourself!!";
+      errorMessage = {
+        message: "Please don't use inappropriate words!! Behave yourself!!",
+        type : "danger"
+      };
       res.redirect("/");
     } else if (user) {
-      errorMessage = "Name already exists !!";
+      errorMessage = {
+        message : "Name already exists !!",
+        type : "danger"
+      };
       res.redirect("/");
     } else if (ip) {
-      errorMessage = "Already exist for this IP Address!!";
+      errorMessage = {
+        message : "Already exist for this IP Address!!",
+        type : "danger"
+      };
       res.redirect("/");
     } else {
       await userData.create({
@@ -52,7 +64,10 @@ app.post("/add", async (req, res) => {
         name: req.body.name.toUpperCase().trim(),
         color: color,
       });
-      errorMessage = "Successfully added!!";
+      errorMessage = {
+        message : "Successfully added!!",
+        type : "success"
+    }
       res.redirect("/");
     }
   } catch (e) {
