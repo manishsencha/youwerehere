@@ -3,7 +3,9 @@ const mongoose = require("mongoose");
 const userData = require("./data");
 const profanity = require("profanity-hindi");
 const emoji = require("has-emoji");
+require("dotenv").config();
 const app = express();
+
 const PORT = process.env.PORT || 3000;
 app.set("view engine", "ejs");
 app.set("trust proxy", true);
@@ -13,7 +15,7 @@ const colorsarr = ["primary", "success", "danger", "info", "secondary"];
 app.use(express.urlencoded({ extended: false }));
 mongoose
   .connect(
-    "mongodb+srv://manishsencha:Psghcgueg.7@youwerehere.skqd6.mongodb.net/youwerehere?retryWrites=true&w=majority",
+    process.env.DB_URL,
     { useNewUrlParser: true, useUnifiedTopology: true }
   )
   .then(() => {
