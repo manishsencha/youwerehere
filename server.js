@@ -28,7 +28,7 @@ app.post("/add", async (req, res) => {
     // console.log(reqIP);
     const ip = await userData.findOne({ ip: reqIP });
     const user = await userData.findOne({
-      name: { $regex: req.body.name, $options: "i" },
+      name: req.body.name.toUpperCase().trim(),
     });
     const color = colorsarr[Math.floor(Math.random() * colorsarr.length)];
     if (profanity.isMessageDirty(req.body.name)) {
@@ -41,7 +41,11 @@ app.post("/add", async (req, res) => {
       errorMessage = "Already exist for this IP Address!!";
       res.redirect("/");
     } else {
-      await userData.create({ ip: reqIP, name: req.body.name, color: color });
+      await userData.create({
+        ip: reqIP,
+        name: req.body.name.toUpperCase().trim(),
+        color: color,
+      });
       errorMessage = "Successfully added!!";
       res.redirect("/");
     }
@@ -58,6 +62,7 @@ app.post("/noerror", (req, res) => {
 
 app.get("/", async (req, res) => {
   const data = await userData.find();
+
   res.render("index", { data: data, count: data.length, error: errorMessage }),
     async (req, res) => {
       const data = await userData.find();
