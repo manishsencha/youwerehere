@@ -24,8 +24,8 @@ mongoose
   .catch((err) => console.log(err));
 
 var errorMessage = {
-  message : " ", 
-  type : " "
+  message: " ",
+  type: " ",
 };
 
 app.post("/add", async (req, res) => {
@@ -38,24 +38,24 @@ app.post("/add", async (req, res) => {
     });
     const color = colorsarr[Math.floor(Math.random() * colorsarr.length)];
     if (emoji(req.body.name)) {
-      errorMessage = "Emotes are not allowed!!";
+      errorMessage = { message: "Emotes are not allowed!!", type: "danger" };
       res.redirect("/");
     } else if (profanity.isMessageDirty(req.body.name)) {
       errorMessage = {
         message: "Please don't use inappropriate words!! Behave yourself!!",
-        type : "danger"
+        type: "danger",
       };
       res.redirect("/");
     } else if (user) {
       errorMessage = {
-        message : "Name already exists !!",
-        type : "danger"
+        message: "Name already exists !!",
+        type: "danger",
       };
       res.redirect("/");
     } else if (ip) {
       errorMessage = {
-        message : "Already exist for this IP Address!!",
-        type : "danger"
+        message: "Already exist for this IP Address!!",
+        type: "danger",
       };
       res.redirect("/");
     } else {
@@ -65,9 +65,9 @@ app.post("/add", async (req, res) => {
         color: color,
       });
       errorMessage = {
-        message : "Successfully added!!",
-        type : "success"
-    }
+        message: "Successfully added!!",
+        type: "success",
+      };
       res.redirect("/");
     }
   } catch (e) {
